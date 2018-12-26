@@ -35,7 +35,7 @@ public class Main extends Application {
 
 	private Scene scene;
 	private AnimationTimer timer;
-	private double ballX, ballY, ballRadius, dx, dy, ry;
+	private double ballX, ballY, ballR, dx, dy, recY;
 	private SimpleDoubleProperty speed;
 	private int player1_score, player2_score;
 	private Alert alert;
@@ -78,6 +78,7 @@ public class Main extends Application {
 				break;
 			case DOWN:
 				key_DOWN = true;
+				break;
 			case RIGHT:
 				speedSlider.increment();
 				break;
@@ -120,7 +121,7 @@ public class Main extends Application {
 	public void init_ball() {
 		ball.setLayoutX(pane.getPrefWidth() / 2);
 		ball.setLayoutY(pane.getPrefHeight() / 2);
-		ballRadius = (int) ball.getRadius();
+		ballR = (int) ball.getRadius();
 		double[] moves = { -speed.get(), speed.get() };
 		Random rand = new Random();
 		dx = moves[rand.nextInt(2)];
@@ -150,28 +151,16 @@ public class Main extends Application {
 		((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("ping-pong.png"));
 	}
 
-	public void goUP_p1() {
-		ry = player1.getLayoutY();
-		if (ry >= 10)
-			player1.setLayoutY(ry - 10);
+	public void goUP(Rectangle player) {
+		recY = player.getLayoutY();
+		if (recY >= 10)
+			player.setLayoutY(recY - 10);
 	}
 
-	public void goDOWN_p1() {
-		ry = player1.getLayoutY();
-		if (ry + player1.getHeight() <= pane.getHeight() - 10)
-			player1.setLayoutY(ry + 10);
-	}
-
-	public void goUP_p2() {
-		ry = player2.getLayoutY();
-		if (ry >= 10)
-			player2.setLayoutY(ry - 10);
-	}
-
-	public void goDOWN_p2() {
-		ry = player2.getLayoutY();
-		if (ry + player2.getHeight() <= pane.getHeight() - 10)
-			player2.setLayoutY(ry + 10);
+	public void goDOWN(Rectangle player) {
+		recY = player.getLayoutY();
+		if (recY + player.getHeight() <= pane.getHeight() - 10)
+			player.setLayoutY(recY + 10);
 	}
 
 	public void change_speed() {
@@ -183,13 +172,13 @@ public class Main extends Application {
 
 	public void move_players() {
 		if (key_W)
-			goUP_p1();
+			goUP(player1);
 		if (key_S)
-			goDOWN_p1();
+			goDOWN(player1);
 		if (key_UP)
-			goUP_p2();
+			goUP(player2);
 		if (key_DOWN)
-			goDOWN_p2();
+			goDOWN(player2);
 	}
 
 	public void move_ball() {
@@ -209,16 +198,16 @@ public class Main extends Application {
 			dx = speed.get();
 		}
 		// go down
-		else if (ballY - ballRadius <= 0.0) {
+		else if (ballY - ballR <= 0.0) {
 			dy = speed.get();
 		}
 		// go up
-		else if (ballY + ballRadius >= pane.getHeight()) {
+		else if (ballY + ballR >= pane.getHeight()) {
 			dy = -speed.get();
 		}
 
 		// increase score for player 1
-		else if (ballX + ballRadius >= pane.getWidth()) {
+		else if (ballX + ballR >= pane.getWidth()) {
 			player1_score++;
 			lbl_p1_score.setText(player1_score + "");
 			// reinitialize ball bounds:
